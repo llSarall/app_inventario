@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragmentos :: head('Inventario')}"></head>
+<body>
+<header th:replace="~{fragmentos :: barra('inventario')}"></header>
+
+<main class="contenido">
+    <h1>Inventario</h1>
+    <div th:replace="~{fragmentos :: mensajes}"></div>
+
+    <section class="tarjeta" sec:authorize="hasRole('ADMINISTRADOR')">
+        <h2>Agregar producto</h2>
+        <form th:action="@{/inventario/productos}" method="post" class="formulario-linea">
+            <label>Nombre <input type="text" name="nombre"></label>
+            <label>Descripción <input type="text" name="descripcion"></label>
+            <label>Precio <input type="number" name="precio" step="0.01" value="0"></label>
+            <button type="submit" class="btn btn-primario">Agregar</button>
+        </form>
+    </section>
+
+    <section class="tarjeta">
+        <div class="tarjeta-encabezado">
+            <h2>Productos</h2>
+            <div class="filtros">
+                <a th:href="@{/inventario(filtro='todos')}" th:classappend="${filtro == 'todos'} ? 'activo'">Todos</a>
+                <a th:href="@{/inventario(filtro='activos')}" th:classappend="${filtro == 'activos'} ? 'activo'">Activos</a>
+                <a th:href="@{/inventario(filtro='inactivos')}" th:classappend="${filtro == 'inactivos'} ? 'activo'">Inactivos</a>
+            </div>
+        </div>
+
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th class="num">Precio</th>
+                    <th class="num">Existencia</th>
+                    <th>Estatus</th>
+                    <th sec:authorize="hasRole('ADMINISTRADOR')">Entrada de productos</th>
+                    <th sec:authorize="hasRole('ADMINISTRADOR')">Acción</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(productos)}">
+                    <td colspan="8" class="vacio">No hay productos para mostrar.</td>
+                </tr>
+                <tr th:each="p : ${productos}" th:classappend="${p.estatus != 1} ? 'fila-inactiva'">
+                    <td th:text="${p.idProducto}"></td>
+                    <td th:text="${p.nombre}"></td>
+                    <td th:text="${p.descripcion}"></td>
+                    <td class="num" th:text="${'$' + #numbers.formatDecimal(p.precio, 1, 'COMMA', 2, 'POINT')}"></td>
+                    <td class="num"><strong th:text="${p.cantidad}"></strong></td>
+                    <td>
+                        <span th:if="${p.estatus == 1}" class="etiqueta etiqueta-activo">Activo</span>
+                        <span th:unless="${p.estatus == 1}" class="etiqueta etiqueta-inactivo">Inactivo</span>
+                    </td>
+                    <td sec:authorize="hasRole('ADMINISTRADOR')">
+                        <form th:if="${p.estatus == 1}" class="en-linea"
+                              th:action="@{/inventario/{id}/entrada(id=${p.idProducto})}" method="post">
+                            <input type="number" name="cantidad" placeholder="Cantidad" class="input-corto">
+                            <button type="submit" class="btn btn-secundario">+ Agregar</button>
+                        </form>
+                    </td>
+                    <td sec:authorize="hasRole('ADMINISTRADOR')">
+                        <form th:if="${p.estatus == 1}" method="post"
+                              th:action="@{/inventario/{id}/baja(id=${p.idProducto})}">
+                            <button type="submit" class="btn btn-peligro">Dar de baja</button>
+                        </form>
+                        <form th:unless="${p.estatus == 1}" method="post"
+                              th:action="@{/inventario/{id}/reactivar(id=${p.idProducto})}">
+                            <button type="submit" class="btn btn-secundario">Reactivar</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

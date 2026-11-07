@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: head('Iniciar sesión')}"></head>
+<body class="pagina-login">
+<main class="tarjeta login">
+    <h1>Inventario Almacén</h1>
+    <p class="subtitulo">Inicia sesión para continuar</p>
+
+    <div class="alerta alerta-error" th:if="${param.error}">Correo o contraseña incorrectos.</div>
+    <div class="alerta alerta-exito" th:if="${param.salir}">Cerraste sesión correctamente.</div>
+
+    <form th:action="@{/login}" method="post" class="formulario">
+        <label>Correo <input type="email" name="correo" required></label>
+        <label>Contraseña <input type="password" name="contrasena" required></label>
+        <button type="submit" class="btn btn-primario btn-bloque">Entrar</button>
+    </form>
+</main>
+</body>
+</html>

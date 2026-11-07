@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${titulo} + ' | Inventario'">Inventario</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+
+<body>
+
+<header th:fragment="barra(activo)" class="barra">
+    <div class="barra-marca">Inventario Almacén</div>
+
+    <nav class="barra-menu">
+        <a th:href="@{/inventario}" th:classappend="${activo == 'inventario'} ? 'activo'">Inventario</a>
+        <a sec:authorize="hasRole('ALMACENISTA')" th:href="@{/salidas}"
+           th:classappend="${activo == 'salidas'} ? 'activo'">Salida de productos</a>
+        <a sec:authorize="hasRole('ADMINISTRADOR')" th:href="@{/historico}"
+           th:classappend="${activo == 'historico'} ? 'activo'">Histórico</a>
+    </nav>
+
+    <div class="barra-usuario">
+        <span sec:authentication="name"></span>
+        <span class="rol" sec:authorize="hasRole('ADMINISTRADOR')">Administrador</span>
+        <span class="rol" sec:authorize="hasRole('ALMACENISTA')">Almacenista</span>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-claro">Cerrar sesión</button>
+        </form>
+    </div>
+</header>
+
+<div th:fragment="mensajes">
+    <div class="alerta alerta-error" th:if="${error}" th:text="${error}"></div>
+    <div class="alerta alerta-exito" th:if="${exito}" th:text="${exito}"></div>
+</div>
+
+</body>
+</html>

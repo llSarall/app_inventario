@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: head('Salida de productos')}"></head>
+<body>
+<header th:replace="~{fragmentos :: barra('salidas')}"></header>
+
+<main class="contenido">
+    <h1>Salida de productos</h1>
+    <div th:replace="~{fragmentos :: mensajes}"></div>
+
+    <section class="tarjeta">
+        <h2>Registrar salida</h2>
+        <form th:action="@{/salidas}" method="post" class="formulario-linea">
+            <label>Producto
+                <select name="idProducto">
+                    <option value="">-- Selecciona --</option>
+                    <option th:each="p : ${productos}" th:value="${p.idProducto}"
+                            th:text="${p.nombre + ' (existencia: ' + p.cantidad + ')'}"></option>
+                </select>
+            </label>
+            <label>Cantidad <input type="number" name="cantidad"></label>
+            <button type="submit" class="btn btn-primario">Sacar del almacén</button>
+        </form>
+    </section>
+
+    <section class="tarjeta">
+        <h2>Productos activos</h2>
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                <tr><th>ID</th><th>Nombre</th><th>Descripción</th><th class="num">Existencia</th></tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(productos)}">
+                    <td colspan="4" class="vacio">No hay productos activos.</td>
+                </tr>
+                <tr th:each="p : ${productos}">
+                    <td th:text="${p.idProducto}"></td>
+                    <td th:text="${p.nombre}"></td>
+                    <td th:text="${p.descripcion}"></td>
+                    <td class="num"><strong th:text="${p.cantidad}"></strong></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

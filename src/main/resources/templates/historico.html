@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragmentos :: head('Histórico')}"></head>
+<body>
+<header th:replace="~{fragmentos :: barra('historico')}"></header>
+
+<main class="contenido">
+    <h1>Histórico de movimientos</h1>
+
+    <section class="tarjeta">
+        <div class="tarjeta-encabezado">
+            <h2>Movimientos</h2>
+            <form th:action="@{/historico}" method="get" class="formulario-linea">
+                <label>Tipo de movimiento
+                    <select name="tipo">
+                        <option value="todos" th:selected="${tipo == 'todos'}">Todos</option>
+                        <option value="entrada" th:selected="${tipo == 'entrada'}">Entrada</option>
+                        <option value="salida" th:selected="${tipo == 'salida'}">Salida</option>
+                    </select>
+                </label>
+                <button type="submit" class="btn btn-secundario">Filtrar</button>
+            </form>
+        </div>
+
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                <tr>
+                    <th>Fecha y hora</th>
+                    <th>Tipo</th>
+                    <th>Producto</th>
+                    <th class="num">Cantidad</th>
+                    <th>Realizado por</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(movimientos)}">
+                    <td colspan="5" class="vacio">No hay movimientos registrados.</td>
+                </tr>
+                <tr th:each="m : ${movimientos}">
+                    <td th:text="${#temporals.format(m.fechaHora, 'dd/MM/yyyy HH:mm:ss')}"></td>
+                    <td>
+                        <span th:class="${m.tipoMovimiento.idTipoMovimiento == 1} ? 'etiqueta etiqueta-entrada' : 'etiqueta etiqueta-salida'"
+                              th:text="${m.tipoMovimiento.nombre}"></span>
+                    </td>
+                    <td th:text="${m.producto.nombre}"></td>
+                    <td class="num" th:text="${m.cantidad}"></td>
+                    <td th:text="${m.usuario.nombre}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>
