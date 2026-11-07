@@ -14,11 +14,4 @@ public class InventarioApplication {
         SpringApplication.run(InventarioApplication.class, args);
     }
 
-    // TEMPORAL: prueba de relaciones
-    @Bean
-    CommandLineRunner prueba(UsuarioRepository repo) {
-        return args -> repo.findAll().forEach(u ->
-                System.out.println(u.getNombre() + " - " + u.getCorreo() + " - " + u.getRol().getNombre()));
-    }
-
 }
